@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_login/flutter_login.dart';
 import 'package:mountaincompanion/pages/login/login_page.dart';
+import 'package:mountaincompanion/pages/travels/travels_page.dart';
 
 void main() => runApp(App());
 
@@ -23,7 +23,8 @@ class App extends StatelessWidget {
           accentColor: Colors.green,
           cursorColor: Colors.green,
         ),
-        home: LoginPage(),
+        //home: LoginPage(),
+        home: TravelsPage(),
       ),
     );
   }

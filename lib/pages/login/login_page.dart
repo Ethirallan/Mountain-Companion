@@ -37,7 +37,8 @@ class LoginPage extends StatelessWidget {
     return FlutterLogin(
       theme: LoginTheme(
         primaryColor: Colors.green,
-        pageColorLight: Colors.green,
+        pageColorLight: Colors.lightGreenAccent,
+        pageColorDark: Colors.lightBlueAccent,
         titleStyle: TextStyle(
           fontSize: 38,
         ),
