@@ -1,27 +1,46 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:mountaincompanion/pages/travels/travels_page.dart';
 
 class LoginPage extends StatelessWidget {
   Duration get loginTime => Duration(milliseconds: 2250);
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   Future<String> _login(LoginData data) {
-    return Future.delayed(loginTime).then((_) {
-      if (data.name != 'admin@admin.si') {
-        return "User doesn't exist";
+    return Future.delayed(loginTime).then((_) async {
+      try {
+        AuthResult result  = (await _auth.signInWithEmailAndPassword(
+          email: data.name,
+          password: data.password,
+        ));
+
+        FirebaseUser user = result.user;
+
+        return null;
+
+      } on PlatformException catch (e) {
+        print(e);
+        return e.code;
       }
-      if (data.password != 'admin') {
-        return 'Incorrect password!';
-      }
-      return null;
     });
   }
 
   Future<String> _register(LoginData data) {
-    return Future.delayed(loginTime).then((_) {
+    return Future.delayed(loginTime).then((_) async {
+      final FirebaseUser user = (await _auth.createUserWithEmailAndPassword(
+        email: data.name,
+        password: data.password,
+      ))
+      .user;
+      print(user.getIdToken());
       return null;
     });
   }
+
+
 
   Future<String> _recoverPassword(String name) {
     return Future.delayed(loginTime).then((_) {
