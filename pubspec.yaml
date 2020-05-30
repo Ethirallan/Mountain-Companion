@@ -26,6 +26,8 @@ dependencies:
   google_fonts: ^1.0.0
   flutter_login: ^1.0.14
   animations: ^1.0.0+5
+  google_sign_in: ^4.5.1
+  firebase_auth: ^0.16.1
 
 
 dev_dependencies:

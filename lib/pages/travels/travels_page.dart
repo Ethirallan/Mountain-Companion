@@ -1,5 +1,7 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-
+import 'package:mountaincompanion/global_widgets/mountain_app_bar.dart';
+import 'package:mountaincompanion/pages/new_travel/new_travel_page.dart';
 import 'widgets/travel_card.dart';
 
 class TravelsPage extends StatelessWidget {
@@ -22,6 +24,20 @@ class TravelsPage extends StatelessWidget {
             children: <Widget>[
               MountainAppBar(
                 title: 'Travel Diary',
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.menu,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {},
+                ),
+                trailing: IconButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {},
+                ),
               ),
               Expanded(
                 child: Container(
@@ -37,12 +53,12 @@ class TravelsPage extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                     child: ListView(
-                      children: <Widget>[
-                        TravelCard(),
-                        TravelCard(),
-                        TravelCard(),
-                        TravelCard(),
-                      ],
+                      children: List.generate(
+                        10,
+                        (index) => TravelCard(
+                          tag: 'tag' + index.toString(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -51,43 +67,23 @@ class TravelsPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class MountainAppBar extends StatelessWidget {
-  final String title;
-  MountainAppBar({this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: Colors.white,
-            ),
-            onPressed: () {},
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: OpenContainer(
+        openBuilder: (BuildContext context, VoidCallback action) =>
+            NewTravelPage(),
+        tappable: true,
+        closedElevation: 0,
+        closedColor: Colors.lightGreen,
+        closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
+        transitionDuration: Duration(milliseconds: 500),
+        closedBuilder: (BuildContext context, VoidCallback action) => Container(
+          height: 50,
+          width: 50,
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
           ),
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
-            onPressed: () {},
-          ),
-        ],
+        ),
       ),
     );
   }
