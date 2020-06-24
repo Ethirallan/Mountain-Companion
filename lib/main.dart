@@ -1,13 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mountaincompanion/pages/login/login_page.dart';
 import 'package:mountaincompanion/pages/travels/travels_page.dart';
 
 void main() => runApp(App());
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser user;
+
+  Future<FirebaseUser> getUser() async {
+    return await _auth.currentUser();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     //SystemChrome.setEnabledSystemUIOverlays([]);
     return GestureDetector(
       onTap: () {
@@ -25,8 +39,7 @@ class App extends StatelessWidget {
           accentColor: Colors.green,
           cursorColor: Colors.green,
         ),
-        home: LoginPage(),
-        //home: TravelsPage(),
+        home: getUser() == null ? LoginPage() : TravelsPage(),
       ),
     );
   }

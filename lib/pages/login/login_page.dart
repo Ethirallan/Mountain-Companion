@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:mountaincompanion/api/auth.dart';
 import 'package:mountaincompanion/pages/travels/travels_page.dart';
 
 class LoginPage extends StatelessWidget {
@@ -19,6 +20,11 @@ class LoginPage extends StatelessWidget {
 
         FirebaseUser user = result.user;
 
+        IdTokenResult token = await user.getIdToken();
+        print(token.token);
+        // connect to backend
+        await login(token.token);
+
         return null;
 
       } on PlatformException catch (e) {
@@ -35,12 +41,11 @@ class LoginPage extends StatelessWidget {
         password: data.password,
       ))
       .user;
-      print(user.getIdToken());
+      IdTokenResult token = await user.getIdToken();
+      await register(token.token);
       return null;
     });
   }
-
-
 
   Future<String> _recoverPassword(String name) {
     return Future.delayed(loginTime).then((_) {

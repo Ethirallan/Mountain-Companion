@@ -28,7 +28,13 @@ dependencies:
   animations: ^1.0.0+5
   google_sign_in: ^4.5.1
   firebase_auth: ^0.16.1
-
+  dots_indicator: ^1.1.0
+  dio: ^3.0.9
+  intl: ^0.16.1
+  #multi_image_picker: ^4.6.7
+  image_picker: ^0.6.7+2
+  flutter_swiper: ^1.1.6
+  crypto: ^2.1.4
 
 dev_dependencies:
   flutter_test:
