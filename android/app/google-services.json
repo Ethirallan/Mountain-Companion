@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "353377120897",
+    "firebase_url": "https://gorskisopotnik.firebaseio.com",
+    "project_id": "gorskisopotnik",
+    "storage_bucket": "gorskisopotnik.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353377120897:android:7f5808e907f0fd42791380",
+        "android_client_info": {
+          "package_name": "com.ethirallan.mountaincompanion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353377120897-h5kei0qo8jbur279ut9v81q2vevv8o78.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ethirallan.mountaincompanion",
+            "certificate_hash": "fff6589622b66dc71acdf94713b22ff675bb4b26"
+          }
+        },
+        {
+          "client_id": "353377120897-qjvhf2acpp2gqi862fhu9bo8lsdh9gec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUOgLB_toPZy6maQtY1PbO6Sajbs_WDn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353377120897-qjvhf2acpp2gqi862fhu9bo8lsdh9gec.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

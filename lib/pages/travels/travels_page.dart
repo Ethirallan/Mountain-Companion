@@ -1,6 +1,8 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:mountaincompanion/api/travel.dart';
 import 'package:mountaincompanion/global_widgets/mountain_app_bar.dart';
+import 'package:mountaincompanion/models/travel_model.dart';
 import 'package:mountaincompanion/pages/new_travel/new_travel_page.dart';
 import 'widgets/travel_card.dart';
 
@@ -52,14 +54,26 @@ class TravelsPage extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    child: ListView(
-                      children: List.generate(
-                        10,
-                        (index) => TravelCard(
-                          tag: 'tag' + index.toString(),
-                        ),
+
+                      child: FutureBuilder(
+                        future: getTravels(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView.builder(
+                              itemCount: snapshot.data['message'].length,
+                              itemBuilder: (context, index) {
+                                TravelModel travel = new TravelModel(snapshot.data['message'][index]['id'], snapshot.data['message'][index]['user_id'], snapshot.data['message'][index]['title'], DateTime.parse(snapshot.data['message'][index]['date']??DateTime.now().toIso8601String()), snapshot.data['message'][index]['notes'], snapshot.data['message'][index]['thumbnail'], snapshot.data['message'][index]['public'] == 0 ? false : true, DateTime.parse(snapshot.data['message'][index]['created']));
+                                return index-1 > 68 ? TravelCard(
+                                  tag: 'tag' + index.toString(),
+                                  travel: travel,
+                                ) : Container();
+                              },
+                            );
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
                       ),
-                    ),
                   ),
                 ),
               ),
@@ -69,12 +83,12 @@ class TravelsPage extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: OpenContainer(
-        openBuilder: (BuildContext context, VoidCallback action) =>
-            NewTravelPage(),
+        openBuilder: (BuildContext context, VoidCallback action) => NewTravelPage(),
         tappable: true,
         closedElevation: 0,
         closedColor: Colors.lightGreen,
-        closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
+        closedShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(25))),
         transitionDuration: Duration(milliseconds: 500),
         closedBuilder: (BuildContext context, VoidCallback action) => Container(
           height: 50,
