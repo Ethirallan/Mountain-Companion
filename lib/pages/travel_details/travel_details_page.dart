@@ -1,13 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mountaincompanion/global_widgets/mountain_app_bar.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:intl/intl.dart';
+import 'package:mountaincompanion/api/travel.dart';
+import 'package:mountaincompanion/models/stop_model.dart';
+import 'package:mountaincompanion/models/travel_image_model.dart';
+import 'package:mountaincompanion/models/travel_model.dart';
+import 'package:mountaincompanion/pages/travel_details/widgets/stop_card.dart';
 
 class TravelDetailsPage extends StatelessWidget {
   final String tag;
-  TravelDetailsPage({this.tag});
+  final TravelModel travel;
+  TravelDetailsPage({this.tag, this.travel});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(height: double.infinity,
+      body: Container(
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.centerRight,
@@ -23,15 +32,22 @@ class TravelDetailsPage extends StatelessWidget {
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
-                  'Triglavski park',
+                  travel.title ?? '',
                   style: TextStyle(),
                 ),
                 background: Hero(
-                    tag: tag,
-                    child: Image.asset(
+                  tag: tag,
+                  child:
+                  CachedNetworkImage(
+                    imageUrl: 'https://mountain-companion.com/mc-photos/travels/${travel.thumbnail}.png',
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => travel.thumbnailBlurhash != null ? BlurHash(hash: travel.thumbnailBlurhash) : Center(child: CircularProgressIndicator(),),
+                    errorWidget: (context, url, error) => Image.asset(
                       'assets/blur_wallpaper.jpg',
                       fit: BoxFit.cover,
-                    )),
+                    ),
+                  ),
+                ),
               ),
               actions: <Widget>[
                 IconButton(
@@ -39,9 +55,7 @@ class TravelDetailsPage extends StatelessWidget {
                     Icons.more_vert,
                     color: Colors.white,
                   ),
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -57,47 +71,58 @@ class TravelDetailsPage extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           'Date:',
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 8),
                           child: Text(
-                            '18. 5. 2020',
+                            DateFormat('dd. MM. yyyy').format(travel.date),
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
                         Text(
-                          'Location:',
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 8),
-                          child: Text(
-                            'Triglavski narodni park',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                        ),
-                        Text(
-                          'Stops:',
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                          'Path:',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 218,
-                    child: PageView.builder(
-                      controller: PageController(
-                        viewportFraction: 0.8,
-                        initialPage: 0,
-                      ),
-                      itemCount: 5,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return StopCard();
-                      },
-                    ),
+                  FutureBuilder(
+                    future: getStops(travel.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var data = snapshot.data['message'];
+                        return SizedBox(
+                          height: 218,
+                          child: PageView.builder(
+                            controller: PageController(
+                              viewportFraction: 0.8,
+                              initialPage: 0,
+                            ),
+                            itemCount: data.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              StopModel stop = new StopModel(data[index]['location'], data[index]['height'], data[index]['time']);
+                              return StopCard(stop: stop,);
+                            },
+                          ),
+                        );
+                      } else {
+                        return Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                    },
                   ),
+
                   Container(
                     padding: EdgeInsets.all(16),
                     child: Column(
@@ -107,46 +132,72 @@ class TravelDetailsPage extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           'Notes:',
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 8),
                           child: Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                            travel.notes,
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 220,
-                    child: PageView.builder(
-                      controller: PageController(
-                        viewportFraction: 0.8,
-                        initialPage: 0,
-                      ),
-                      itemCount: 5,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: EdgeInsets.all(8),
-                          child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage('assets/blur_wallpaper.jpg',),
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                  FutureBuilder(
+                    future: getImages(travel.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var data = snapshot.data['message'];
+                        return SizedBox(
+                          height: 250,
+                          child: PageView.builder(
+                            controller: PageController(
+                              viewportFraction: 0.8,
+                              initialPage: 0,
                             ),
+                            itemCount: data.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              TravelImageModel image = new TravelImageModel(data[index]['id'], data[index]['travel_id'], data[index]['url'], data[index]['blurhash']);
+                              return Container(
+                                padding: EdgeInsets.all(8),
+                                child: CachedNetworkImage(
+                                  imageUrl: image.url,
+                                  imageBuilder: (context, imageProvider) => Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular(15),),
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,),
+                                    ),
+                                  ),
+                                  placeholder: (context, url) => image.blurhash != null ? ClipRRect(child: BlurHash(hash: image.blurhash), borderRadius: BorderRadius.circular(15),) : Center(child: CircularProgressIndicator(),),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(Radius.circular(15),),
+                                          image: DecorationImage(
+                                            image: AssetImage('assets/blur_wallpaper.jpg',),
+                                            fit: BoxFit.cover,),
+                                        ),
+                                      ),
+                                ),
+                              );
+                            },
                           ),
                         );
-                      },
-                    ),
+                      } else {
+                        return Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
@@ -157,61 +208,3 @@ class TravelDetailsPage extends StatelessWidget {
     );
   }
 }
-
-class StopCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        elevation: 4,
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                'Location:',
-                style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 4, bottom: 8),
-                child: Text(
-                  'Triglavski narodni park',
-                  style: TextStyle(color: Colors.black, fontSize: 18),
-                ),
-              ),
-              Text(
-                'Date and time:',
-                style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 4, bottom: 8),
-                child: Text(
-                  '18. 5. 2020',
-                  style: TextStyle(color: Colors.black, fontSize: 18),
-                ),
-              ),
-              Text(
-                'See level:',
-                style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 4, bottom: 8),
-                child: Text(
-                  '1563',
-                  style: TextStyle(color: Colors.black, fontSize: 18),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-

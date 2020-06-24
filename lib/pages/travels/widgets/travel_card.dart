@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:intl/intl.dart';
 import 'package:mountaincompanion/models/travel_model.dart';
 import 'package:mountaincompanion/pages/travel_details/travel_details_page.dart';
@@ -15,7 +17,7 @@ class TravelCard extends StatelessWidget {
         Padding(
           padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
           child: InkWell(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TravelDetailsPage(tag: tag,))),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TravelDetailsPage(tag: tag, travel: travel,))),
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -27,15 +29,32 @@ class TravelCard extends StatelessWidget {
                     tag: tag,
                     child: Container(
                       height: 200,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(15),
-                            topLeft: Radius.circular(15),
+                      child: CachedNetworkImage(
+                        imageUrl: 'https://mountain-companion.com/mc-photos/travels/${travel.thumbnail}.png',
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15),
+                              topLeft: Radius.circular(15),
+                            ),
+                            image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,),
                           ),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: travel.thumbnail == null ? AssetImage('assets/blur_wallpaper.jpg') : NetworkImage('https://mountain-companion.com/mc-photos/travels/${travel.thumbnail}.png'),
+                        ),
+                          placeholder: (context, url) => travel.thumbnailBlurhash != null ? BlurHash(hash: travel.thumbnailBlurhash) : Center(child: CircularProgressIndicator(),),
+                          errorWidget: (context, url, error) =>
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15),
+                              topLeft: Radius.circular(15),
+                            ),
+                            image: DecorationImage(
+                              image: AssetImage('assets/blur_wallpaper.jpg',),
+                              fit: BoxFit.cover,),
                           ),
+                        ),
                       ),
                     ),
                   ),
