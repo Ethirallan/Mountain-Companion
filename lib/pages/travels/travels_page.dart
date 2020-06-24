@@ -62,8 +62,8 @@ class TravelsPage extends StatelessWidget {
                             return ListView.builder(
                               itemCount: snapshot.data['message'].length,
                               itemBuilder: (context, index) {
-                                TravelModel travel = new TravelModel(snapshot.data['message'][index]['id'], snapshot.data['message'][index]['user_id'], snapshot.data['message'][index]['title'], DateTime.parse(snapshot.data['message'][index]['date']??DateTime.now().toIso8601String()), snapshot.data['message'][index]['notes'], snapshot.data['message'][index]['thumbnail'], snapshot.data['message'][index]['public'] == 0 ? false : true, DateTime.parse(snapshot.data['message'][index]['created']));
-                                return index-1 > 68 ? TravelCard(
+                                TravelModel travel = new TravelModel(snapshot.data['message'][index]['id'], snapshot.data['message'][index]['user_id'], snapshot.data['message'][index]['title'], DateTime.parse(snapshot.data['message'][index]['date']??DateTime.now().toIso8601String()), snapshot.data['message'][index]['notes'], snapshot.data['message'][index]['thumbnail'], snapshot.data['message'][index]['thumbnail_blurhash'], snapshot.data['message'][index]['public'] == 0 ? false : true, DateTime.parse(snapshot.data['message'][index]['created']));
+                                return index-1 > 67 ? TravelCard(
                                   tag: 'tag' + index.toString(),
                                   travel: travel,
                                 ) : Container();

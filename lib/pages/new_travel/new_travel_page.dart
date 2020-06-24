@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:mountaincompanion/api/travel.dart';
 import 'package:mountaincompanion/global_widgets/date_input_field.dart';
 import 'package:mountaincompanion/global_widgets/time_input_field.dart';
+import 'package:mountaincompanion/models/stop_model.dart';
 
 class NewTravelPage extends StatefulWidget {
   @override
@@ -269,11 +270,11 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                           Text('${index + 1}. ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
                                           Flexible(
                                             child: Text(
-                                                  stop._location +
+                                                  stop.location +
                                                   '\n' +
-                                                  stop._height.toString() +
+                                                  stop.height.toString() +
                                                   'm\n' +
-                                                  DateFormat('dd. MM. yyyy, HH:mm').format(DateTime.parse(stop._time)),
+                                                  DateFormat('dd. MM. yyyy, HH:mm').format(DateTime.parse(stop.time)),
                                               style: TextStyle(fontSize: 16),
                                             ),
                                           ),
@@ -464,40 +465,6 @@ class _NewStopDialogState extends State<NewStopDialog> {
       ],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
-  }
-}
-
-class StopModel {
-  String _location;
-  int _height;
-  String _time;
-
-  StopModel(this._location, this._height, this._time);
-
-  String get time => _time;
-
-  set time(String value) {
-    _time = value;
-  }
-
-  int get height => _height;
-
-  set height(int value) {
-    _height = value;
-  }
-
-  String get location => _location;
-
-  set location(String value) {
-    _location = value;
-  }
-
-  Map<String,dynamic> toJson(){
-    return {
-      'location': this._location,
-      'height': this._height,
-      'time': this._time,
-    };
   }
 }
 

@@ -5,11 +5,12 @@ class TravelModel {
   DateTime _date;
   String _notes;
   String _thumbnail;
+  String _thumbnailBlurhash;
   bool _public;
   DateTime _created;
 
   TravelModel(this._id, this._userId, this._title, this._date, this._notes,
-      this._thumbnail, this._public, this._created);
+      this._thumbnail,this._thumbnailBlurhash, this._public, this._created);
 
   DateTime get created => _created;
 
@@ -21,6 +22,12 @@ class TravelModel {
 
   set public(bool value) {
     _public = value;
+  }
+
+  String get thumbnailBlurhash => _thumbnailBlurhash;
+
+  set thumbnailBlurhash(String value) {
+    _thumbnailBlurhash = value;
   }
 
   String get thumbnail => _thumbnail;
