@@ -17,7 +17,11 @@ class TravelCard extends StatelessWidget {
         Padding(
           padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
           child: InkWell(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TravelDetailsPage(tag: tag, travel: travel,))),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => TravelDetailsPage(
+                      tag: tag,
+                      travel: travel,
+                    ))),
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -30,7 +34,8 @@ class TravelCard extends StatelessWidget {
                     child: Container(
                       height: 200,
                       child: CachedNetworkImage(
-                        imageUrl: 'https://mountain-companion.com/mc-photos/travels/${travel.thumbnail}.png',
+                        imageUrl:
+                            'https://mountain-companion.com/mc-photos/travels/${travel.thumbnail}.png',
                         imageBuilder: (context, imageProvider) => Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
@@ -38,21 +43,36 @@ class TravelCard extends StatelessWidget {
                               topLeft: Radius.circular(15),
                             ),
                             image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,),
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                          placeholder: (context, url) => travel.thumbnailBlurhash != null ? BlurHash(hash: travel.thumbnailBlurhash) : Center(child: CircularProgressIndicator(),),
-                          errorWidget: (context, url, error) =>
-                        Container(
+                        placeholder: (context, url) => travel
+                                    .thumbnailBlurhash !=
+                                null
+                            ? ClipRRect(
+                                child: BlurHash(hash: travel.thumbnailBlurhash),
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(15),
+                                  topLeft: Radius.circular(15),
+                                ),
+                              )
+                            : Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                        errorWidget: (context, url, error) => Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
                               topRight: Radius.circular(15),
                               topLeft: Radius.circular(15),
                             ),
                             image: DecorationImage(
-                              image: AssetImage('assets/blur_wallpaper.jpg',),
-                              fit: BoxFit.cover,),
+                              image: AssetImage(
+                                'assets/blur_wallpaper.jpg',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -66,19 +86,26 @@ class TravelCard extends StatelessWidget {
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Icon(Icons.location_on, color: Colors.lightGreen,),
+                            Icon(
+                              Icons.location_on,
+                              color: Colors.lightGreen,
+                            ),
                             Padding(
                               padding: EdgeInsets.only(left: 6),
-                              child: Text(travel.title??''),
+                              child: Text(travel.title ?? ''),
                             ),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            Icon(Icons.date_range, color: Colors.lightGreen,),
+                            Icon(
+                              Icons.date_range,
+                              color: Colors.lightGreen,
+                            ),
                             Padding(
                               padding: EdgeInsets.only(left: 6),
-                              child: Text(DateFormat('dd. MM. yyyy').format(travel.date)),
+                              child: Text(DateFormat('dd. MM. yyyy')
+                                  .format(travel.date)),
                             ),
                           ],
                         ),
