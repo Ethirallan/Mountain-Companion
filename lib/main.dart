@@ -15,13 +15,22 @@ class _AppState extends State<App> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser user;
 
-  Future<FirebaseUser> getUser() async {
-    return await _auth.currentUser();
+  Future getUser() async {
+    var user = await _auth.currentUser();
+    if (user == null) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
     //SystemChrome.setEnabledSystemUIOverlays([]);
     return GestureDetector(
       onTap: () {
@@ -39,7 +48,16 @@ class _AppState extends State<App> {
           accentColor: Colors.green,
           cursorColor: Colors.green,
         ),
-        home: getUser() == null ? LoginPage() : TravelsPage(),
+        home: FutureBuilder(
+          future: getUser(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data == false ? LoginPage() : TravelsPage();
+            } else {
+              return Container();
+            }
+          },
+        ),
       ),
     );
   }

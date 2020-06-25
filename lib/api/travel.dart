@@ -27,10 +27,25 @@ Future getTravels() async {
 
 
   Response response = await dio.get(
-      'https://api.mountain-companion.com/travels',
+    'https://api.mountain-companion.com/travels',
   );
 
   //print(response.data);
+  return response.data;
+}
+
+Future deleteTravel(int id) async {
+  FirebaseUser user = await _auth.currentUser();
+
+  IdTokenResult token = await user.getIdToken();
+  dio.options.headers["authorization"] = "Bearer ${token.token}";
+
+
+  Response response = await dio.delete(
+    'https://api.mountain-companion.com/travels/$id',
+  );
+
+  print(response.data);
   return response.data;
 }
 

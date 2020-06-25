@@ -1,12 +1,29 @@
 import 'package:animations/animations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:mountaincompanion/api/travel.dart';
 import 'package:mountaincompanion/global_widgets/mountain_app_bar.dart';
 import 'package:mountaincompanion/models/travel_model.dart';
+import 'package:mountaincompanion/pages/login/login_page.dart';
 import 'package:mountaincompanion/pages/new_travel/new_travel_page.dart';
 import 'widgets/travel_card.dart';
 
-class TravelsPage extends StatelessWidget {
+class TravelsPage extends StatefulWidget {
+  @override
+  _TravelsPageState createState() => _TravelsPageState();
+}
+
+class _TravelsPageState extends State<TravelsPage> {
+
+  Future _dataFuture;
+
+  @override
+  void initState() {
+    _dataFuture = getTravels();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +48,22 @@ class TravelsPage extends StatelessWidget {
                     Icons.menu,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+
+                  },
                 ),
                 trailing: IconButton(
                   icon: Icon(
                     Icons.more_vert,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    final FirebaseAuth _auth = FirebaseAuth.instance;
+                    if (await _auth.currentUser() != null) {
+                      await _auth.signOut();
+                      Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => LoginPage()));
+                    }
+                  },
                 ),
               ),
               Expanded(
@@ -56,21 +81,39 @@ class TravelsPage extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
 
                       child: FutureBuilder(
-                        future: getTravels(),
+                        future: _dataFuture,
                         builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return ListView.builder(
-                              itemCount: snapshot.data['message'].length,
-                              itemBuilder: (context, index) {
-                                TravelModel travel = new TravelModel(snapshot.data['message'][index]['id'], snapshot.data['message'][index]['user_id'], snapshot.data['message'][index]['title'], DateTime.parse(snapshot.data['message'][index]['date']??DateTime.now().toIso8601String()), snapshot.data['message'][index]['notes'], snapshot.data['message'][index]['thumbnail'], snapshot.data['message'][index]['thumbnail_blurhash'], snapshot.data['message'][index]['public'] == 0 ? false : true, DateTime.parse(snapshot.data['message'][index]['created']));
-                                return index-1 > 67 ? TravelCard(
-                                  tag: 'tag' + index.toString(),
-                                  travel: travel,
-                                ) : Container();
-                              },
+                          if (snapshot.connectionState != ConnectionState.done) {
+                            return Center(child: CircularProgressIndicator(),);
+                          } else if (snapshot.hasData) {
+                            return AnimationLimiter(
+                              child: ListView.builder(
+                                itemCount: snapshot.data['message'].length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  var element = snapshot.data['message'][index];
+                                  TravelModel travel = new TravelModel(element['id'], element['user_id'], element['title'], DateTime.parse(element['date']??DateTime.now().toIso8601String()), element['notes'], element['thumbnail'], element['thumbnail_blurhash'], element['public'] == 0 ? false : true, DateTime.parse(element['created']));
+
+                                  return AnimationConfiguration.staggeredList(
+                                    position: index,
+                                    delay: Duration(milliseconds: 300),
+                                    duration: Duration(milliseconds: 500),
+                                    child: SlideAnimation(
+                                      verticalOffset: 50,
+                                      horizontalOffset: 300,
+                                      child: FadeInAnimation(
+                                        child: TravelCard(
+                                          tag: 'tag' + index.toString(),
+                                          travel: travel,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             );
                           } else {
-                            return Center(child: CircularProgressIndicator());
+//                            return Center(child: CircularProgressIndicator());
+                            return Container();
                           }
                         },
                       ),
@@ -90,6 +133,11 @@ class TravelsPage extends StatelessWidget {
         closedShape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(25))),
         transitionDuration: Duration(milliseconds: 500),
+        onClosed: (val) {
+          setState(() {
+            _dataFuture = getTravels();
+          });
+        },
         closedBuilder: (BuildContext context, VoidCallback action) => Container(
           height: 50,
           width: 50,
