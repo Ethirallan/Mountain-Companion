@@ -120,17 +120,17 @@ class TravelCard extends StatelessWidget {
         TravelCardButton(
           icon: Icons.favorite,
           top: 20,
-          left: 340,
+          right: 0,
         ),
         TravelCardButton(
           icon: Icons.bookmark,
           top: 80,
-          left: 340,
+          right: 0,
         ),
         TravelCardButton(
           icon: Icons.share,
           top: 140,
-          left: 340,
+          right: 0,
         ),
       ],
     );
