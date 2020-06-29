@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:mountaincompanion/api/travel.dart';
+import 'package:mountaincompanion/global_widgets/mc_drawer.dart';
 import 'package:mountaincompanion/global_widgets/mountain_app_bar.dart';
 import 'package:mountaincompanion/models/travel_model.dart';
 import 'package:mountaincompanion/pages/login/login_page.dart';
@@ -27,6 +28,7 @@ class _TravelsPageState extends State<TravelsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MCDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -43,14 +45,14 @@ class _TravelsPageState extends State<TravelsPage> {
             children: <Widget>[
               MountainAppBar(
                 title: 'Travel Diary',
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.menu,
-                    color: Colors.white,
+                leading: Builder(
+                  builder: (context) => IconButton(
+                    icon: Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
-                  onPressed: () {
-
-                  },
                 ),
                 trailing: IconButton(
                   icon: Icon(
