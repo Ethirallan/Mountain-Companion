@@ -37,6 +37,7 @@ dependencies:
   cached_network_image: ^2.2.0+1
   flutter_blurhash: ^0.5.0
   flutter_staggered_animations: ^0.1.2
+  geolocator: ^5.3.2+2
 
 dev_dependencies:
   flutter_test:
