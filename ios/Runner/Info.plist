@@ -60,11 +60,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>NSLocationAlwaysUsageDescription</key>
-    <string>Can I haz location always?</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Need location when in use</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>Reason why app needs location</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Reason why app needs location</string>
 </dict>
 </plist>

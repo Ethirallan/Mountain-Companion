@@ -106,13 +106,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  equatable:
-    dependency: transitive
-    description:
-      name: equatable
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0"
   file:
     dependency: transitive
     description:
@@ -261,20 +254,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "8.8.1"
-  geolocator:
+  geolocation:
     dependency: "direct main"
     description:
-      name: geolocator
+      name: geolocation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.3.2+2"
-  google_api_availability:
-    dependency: transitive
-    description:
-      name: google_api_availability
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.4"
+    version: "1.1.2"
   google_fonts:
     dependency: "direct main"
     description:
@@ -352,13 +338,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.2"
-  location_permissions:
-    dependency: transitive
-    description:
-      name: location_permissions
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0+1"
   matcher:
     dependency: transitive
     description:
@@ -436,6 +415,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
+  platform_detect:
+    dependency: transitive
+    description:
+      name: platform_detect
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.0"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -457,6 +443,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.3"
+  pub_semver:
+    dependency: transitive
+    description:
+      name: pub_semver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.4"
   quiver:
     dependency: transitive
     description:
@@ -511,6 +504,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  streams_channel:
+    dependency: transitive
+    description:
+      name: streams_channel
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   string_scanner:
     dependency: transitive
     description:
@@ -539,6 +539,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.15"
+  torch_compat:
+    dependency: "direct main"
+    description:
+      name: torch_compat
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   transformer_page_view:
     dependency: transitive
     description:
@@ -553,6 +560,34 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  url_launcher:
+    dependency: "direct main"
+    description:
+      name: url_launcher
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.4.11"
+  url_launcher_macos:
+    dependency: transitive
+    description:
+      name: url_launcher_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1+7"
+  url_launcher_platform_interface:
+    dependency: transitive
+    description:
+      name: url_launcher_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.7"
+  url_launcher_web:
+    dependency: transitive
+    description:
+      name: url_launcher_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1+6"
   uuid:
     dependency: transitive
     description:
