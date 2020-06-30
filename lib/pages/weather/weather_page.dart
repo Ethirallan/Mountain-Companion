@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:mountaincompanion/api/weather.dart';
 import 'package:mountaincompanion/global_widgets/mountain_app_bar.dart';
 import 'package:mountaincompanion/models/weather_mountain_model.dart';
@@ -37,133 +38,60 @@ class WeatherPage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: FutureBuilder(
-                  future: getWeatherMountains(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Padding(
-                        padding: EdgeInsets.all(16),
-                        child: ListView(
-                          children: <Widget>[
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text('Katarina nad Ljubljano'),
-                                onTap: () {
-                                  List data = [];
-                                  for (var weather in snapshot.data) {
-                                    if (weather['location'] == 'Katarina nad Ljubljano') {
-                                      data.add(weather);
-                                    }
-                                  }
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => WeatherDetails(data: data,)));
-                                },
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: FutureBuilder(
+                    future: getWeatherMountains(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return AnimationLimiter(
+                          child: ListView(
+                            children: <Widget>[
+                              WeatherCard(
+                                index: 0,
+                                label: 'Katarina nad Ljubljano',
+                                snapshotData: snapshot.data,
                               ),
-                            ),
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text('Kredarica'),
-                                onTap: () {
-                                  List data = [];
-                                  for (var weather in snapshot.data) {
-                                    if (weather['location'] == 'Kredarica') {
-                                      data.add(weather);
-                                    }
-                                  }
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => WeatherDetails(data: data,)));
-                                },
+                              WeatherCard(
+                                index: 1,
+                                label: 'Kredarica',
+                                snapshotData: snapshot.data,
                               ),
-                            ),
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text('Lisca'),
-                                onTap: () {
-                                  List data = [];
-                                  for (var weather in snapshot.data) {
-                                    if (weather['location'] == 'Lisca') {
-                                      data.add(weather);
-                                    }
-                                  }
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => WeatherDetails(data: data,)));
-                                },
+                              WeatherCard(
+                                index: 2,
+                                label: 'Lisca',
+                                snapshotData: snapshot.data,
                               ),
-                            ),
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text('Rateče'),
-                                onTap: () {
-                                  List data = [];
-                                  for (var weather in snapshot.data) {
-                                    if (weather['location'] == 'Rateče') {
-                                      data.add(weather);
-                                    }
-                                  }
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => WeatherDetails(data: data,)));
-                                },
+                              WeatherCard(
+                                index: 3,
+                                label: 'Rateče',
+                                snapshotData: snapshot.data,
                               ),
-                            ),
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text('Slovenj Gradec'),
-                                onTap: () {
-                                  List data = [];
-                                  for (var weather in snapshot.data) {
-                                    if (weather['location'] == 'Slovenj Gradec') {
-                                      data.add(weather);
-                                    }
-                                  }
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => WeatherDetails(data: data,)));
-                                },
+                              WeatherCard(
+                                index: 4,
+                                label: 'Slovenj Gradec',
+                                snapshotData: snapshot.data,
                               ),
-                            ),
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text('Vogel'),
-                                onTap: () {
-                                  List data = [];
-                                  for (var weather in snapshot.data) {
-                                    if (weather['location'] == 'Vogel') {
-                                      data.add(weather);
-                                    }
-                                  }
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => WeatherDetails(data: data,)));
-                                },
+                              WeatherCard(
+                                index: 5,
+                                label: 'Vogel',
+                                snapshotData: snapshot.data,
                               ),
-                            ),
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text('Vojsko'),
-                                onTap: () {
-                                  List data = [];
-                                  for (var weather in snapshot.data) {
-                                    if (weather['location'] == 'Vojsko') {
-                                      data.add(weather);
-                                    }
-                                  }
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => WeatherDetails(data: data,)));
-                                },
+                              WeatherCard(
+                                index: 6,
+                                label: 'Vojsko',
+                                snapshotData: snapshot.data,
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Center(child: CircularProgressIndicator(),);
-                    }
-                  },
+                            ],
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
             ],
@@ -209,35 +137,110 @@ class WeatherDetails extends StatelessWidget {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      WeatherMountainModel weather = new WeatherMountainModel(data[index]['id'], data[index]['location'], data[index]['datetime'], data[index]['icon'], data[index]['description'], data[index]['t'], data[index]['wind_icon'], data[index]['wind_speed'], data[index]['wind_max_speed'], data[index]['p'], data[index]['p_tendency'], data[index]['rain'], data[index]['timestamp']);
-                      return Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        child: ListTile(
-                          title: Text(weather.location),
-                          subtitle: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(weather.datetime),
-                              Text('Description: ' + (weather.description != '' ? weather.description : '/')),
-                              Text('Temp: ${weather.t} ˚C'),
-                              Text('Wind speed: ${weather.windSpeed} km/h'),
-                              Text('Wind max speed: ${weather.windMaxSpeed} km/h'),
-                              Text('Pressure: ${weather.p} hPa'),
-                              Text('Rain in the last 24h: ${weather.rain} mm'),
-                            ],
+                  padding: EdgeInsets.all(16),
+                  child: AnimationLimiter(
+                    child: ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        WeatherMountainModel weather = new WeatherMountainModel(
+                            data[index]['id'],
+                            data[index]['location'],
+                            data[index]['datetime'],
+                            data[index]['icon'],
+                            data[index]['description'],
+                            data[index]['t'],
+                            data[index]['wind_icon'],
+                            data[index]['wind_speed'],
+                            data[index]['wind_max_speed'],
+                            data[index]['p'],
+                            data[index]['p_tendency'],
+                            data[index]['rain'],
+                            data[index]['timestamp']);
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          delay: Duration(milliseconds: 300),
+                          duration: Duration(milliseconds: 500),
+                          child: SlideAnimation(
+                            verticalOffset: 50,
+                            horizontalOffset: 300,
+                            child: FadeInAnimation(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: ListTile(
+                                  title: Text(weather.location),
+                                  subtitle: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(weather.datetime),
+                                      Text('Description: ' +
+                                          (weather.description != ''
+                                              ? weather.description
+                                              : '/')),
+                                      Text('Temp: ${weather.t} ˚C'),
+                                      Text('Wind speed: ${weather.windSpeed} km/h'),
+                                      Text(
+                                          'Wind max speed: ${weather.windMaxSpeed} km/h'),
+                                      Text('Pressure: ${weather.p} hPa'),
+                                      Text('Rain in the last 24h: ${weather.rain} mm'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class WeatherCard extends StatelessWidget {
+  final int index;
+  final String label;
+  final List snapshotData;
+  WeatherCard({this.index, this.label, this.snapshotData});
+  @override
+  Widget build(BuildContext context) {
+    return AnimationConfiguration.staggeredList(
+      position: index,
+      delay: Duration(milliseconds: 300),
+      duration: Duration(milliseconds: 500),
+      child: SlideAnimation(
+        verticalOffset: 50,
+        horizontalOffset: 300,
+        child: FadeInAnimation(
+          child: Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: ListTile(
+              title: Text(label),
+              onTap: () {
+                List data = [];
+                for (var weather in snapshotData) {
+                  if (weather['location'] == label) {
+                    data.add(weather);
+                  }
+                }
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => WeatherDetails(
+                      data: data,
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

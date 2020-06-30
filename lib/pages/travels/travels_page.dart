@@ -127,25 +127,28 @@ class _TravelsPageState extends State<TravelsPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: OpenContainer(
-        openBuilder: (BuildContext context, VoidCallback action) => NewTravelPage(),
-        tappable: true,
-        closedElevation: 0,
-        closedColor: Colors.lightGreen,
-        closedShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(25))),
-        transitionDuration: Duration(milliseconds: 500),
-        onClosed: (val) {
-          setState(() {
-            _dataFuture = getTravels();
-          });
-        },
-        closedBuilder: (BuildContext context, VoidCallback action) => Container(
-          height: 50,
-          width: 50,
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: 20),
+        child: OpenContainer(
+          openBuilder: (BuildContext context, VoidCallback action) => NewTravelPage(),
+          tappable: true,
+          closedElevation: 4,
+          closedColor: Colors.lightGreen,
+          closedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(25))),
+          transitionDuration: Duration(milliseconds: 500),
+          onClosed: (val) {
+            setState(() {
+              _dataFuture = getTravels();
+            });
+          },
+          closedBuilder: (BuildContext context, VoidCallback action) => Container(
+            height: 50,
+            width: 50,
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
