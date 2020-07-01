@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mountaincompanion/pages/mountain_tracker/mountain_tracker_page.dart';
 import 'package:mountaincompanion/pages/sos/sos_page.dart';
 import 'package:mountaincompanion/pages/travels/travels_page.dart';
 import 'package:mountaincompanion/pages/weather/weather_page.dart';
@@ -63,6 +64,12 @@ class _MCDrawerState extends State<MCDrawer> {
                     title: Text('Mountain tracker'),
                     onTap: () {
                       Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (context) => MountainTrackerPage(),
+                        ),
+                      );
                     },
                   ),
                   Divider(),
