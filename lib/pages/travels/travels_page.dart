@@ -1,12 +1,10 @@
 import 'package:animations/animations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:mountaincompanion/api/travel.dart';
 import 'package:mountaincompanion/global_widgets/mc_drawer.dart';
 import 'package:mountaincompanion/global_widgets/mountain_app_bar.dart';
 import 'package:mountaincompanion/models/travel_model.dart';
-import 'package:mountaincompanion/pages/login/login_page.dart';
 import 'package:mountaincompanion/pages/new_travel/new_travel_page.dart';
 import 'widgets/travel_card.dart';
 
@@ -54,19 +52,7 @@ class _TravelsPageState extends State<TravelsPage> {
                     onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
                 ),
-                trailing: IconButton(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Colors.white,
-                  ),
-                  onPressed: () async {
-                    final FirebaseAuth _auth = FirebaseAuth.instance;
-                    if (await _auth.currentUser() != null) {
-                      await _auth.signOut();
-                      Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => LoginPage()));
-                    }
-                  },
-                ),
+                trailing: Container(width: 50,),
               ),
               Expanded(
                 child: Container(
@@ -81,7 +67,6 @@ class _TravelsPageState extends State<TravelsPage> {
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-
                       child: FutureBuilder(
                         future: _dataFuture,
                         builder: (context, snapshot) {
@@ -106,6 +91,11 @@ class _TravelsPageState extends State<TravelsPage> {
                                         child: TravelCard(
                                           tag: 'tag' + index.toString(),
                                           travel: travel,
+                                          fun: () {
+                                            setState(() {
+                                              _dataFuture = getTravels();
+                                            });
+                                          },
                                         ),
                                       ),
                                     ),

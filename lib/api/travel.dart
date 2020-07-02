@@ -17,6 +17,8 @@ Future createNewTravel(Map<String, Object> data) async {
       'https://api.mountain-companion.com/travels',
       data: data
   );
+
+  return response.data;
 }
 
 Future getTravels() async {
@@ -45,7 +47,6 @@ Future deleteTravel(int id) async {
     'https://api.mountain-companion.com/travels/$id',
   );
 
-  print(response.data);
   return response.data;
 }
 

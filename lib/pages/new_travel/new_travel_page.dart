@@ -8,8 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mountaincompanion/api/travel.dart';
 import 'package:mountaincompanion/global_widgets/date_input_field.dart';
-import 'package:mountaincompanion/global_widgets/time_input_field.dart';
 import 'package:mountaincompanion/models/stop_model.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/loading_dialog.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/new_stop_dialog.dart';
 
 class NewTravelPage extends StatefulWidget {
   @override
@@ -18,46 +19,87 @@ class NewTravelPage extends StatefulWidget {
 
 class _NewTravelPageState extends State<NewTravelPage> {
   PageController pageCtrl = new PageController(initialPage: 0);
+  String imgHash;
+  double currentPage = 0;
+
+  void setThumbnailImage(File image) {
+    String base64Image = base64Encode(image.readAsBytesSync());
+    String photo = 'data:image/jpeg;base64,' + base64Image;
+    var bytes = utf8.encode(photo);
+    imgHash = sha256.convert(bytes).toString();
+  }
 
   void next() async {
-    if (pageCtrl.page != 4) {
+    if (currentPage != 4) {
+      setState(() {
+        currentPage++;
+      });
       pageCtrl.nextPage(
           duration: Duration(milliseconds: 500),
           curve: Curves.fastLinearToSlowEaseIn);
-    } else if (pageCtrl.page == 4) {
+    } else if (currentPage == 4) {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Do you want to save this travel?'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('No'),
+                onPressed: () => Navigator.pop(context, false),
+              ),
+              FlatButton(
+                child: Text('Yes'),
+                onPressed: () async {
+                  Navigator.pop(context, true);
+                },
+              ),
+            ],
+          );
+        },
+      ).then((value) async {
+        if (value) {
+          List<String> imagesBase64 = [];
 
-      List<String> imagesBase64 = [];
-      String imgHash;
+          for (File image in images) {
+            String base64Image = base64Encode(image.readAsBytesSync());
+            String photo = 'data:image/jpeg;base64,' + base64Image;
+            imagesBase64.add(photo);
+          }
 
-      for (File image in images) {
-        String base64Image = base64Encode(image.readAsBytesSync());
-        String photo = 'data:image/jpeg;base64,' + base64Image;
-        imagesBase64.add(photo);
-      }
+          if (images.length > 0) {
+            setThumbnailImage(images[0]);
+          }
 
-      if (images.length > 0) {
-        String base64Image = base64Encode(images[0].readAsBytesSync());
-        String photo = 'data:image/jpeg;base64,' + base64Image;
-        var bytes = utf8.encode(photo);
-        imgHash = sha256.convert(bytes).toString();
-      }
+          var data = {
+            'title': titleCtrl.text,
+            'date': date.toIso8601String(),
+            'stops': stops,
+            'images': imagesBase64,
+            'notes': notesCtrl.text,
+            'thumbnail': imgHash
+          };
 
-      var data = {
-        'title' : titleCtrl.text,
-        'date' : date.toIso8601String(),
-        'stops' : stops,
-        'images' : imagesBase64,
-        'notes' : notesCtrl.text,
-        'thumbnail' : imgHash
-      };
-
-      await createNewTravel(data);
-      Navigator.pop(context);
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return loadingDialog;
+            },
+          );
+          await createNewTravel(data);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }
+      });
     }
   }
 
   void previous() {
-    if (pageCtrl.page != 0) {
+    if (currentPage != 0) {
+      setState(() {
+        currentPage--;
+      });
       pageCtrl.previousPage(
           duration: Duration(milliseconds: 500),
           curve: Curves.fastLinearToSlowEaseIn);
@@ -73,7 +115,8 @@ class _NewTravelPageState extends State<NewTravelPage> {
   final picker = ImagePicker();
 
   Future getImage(int source) async {
-    final pickedFile = await picker.getImage(source: source == 0 ? ImageSource.camera : ImageSource.gallery);
+    final pickedFile = await picker.getImage(
+        source: source == 0 ? ImageSource.camera : ImageSource.gallery);
 
     setState(() {
       images.add(File(pickedFile.path));
@@ -109,7 +152,7 @@ class _NewTravelPageState extends State<NewTravelPage> {
                 child: Center(
                   child: DotsIndicator(
                     dotsCount: 5,
-                    position: 0,
+                    position: currentPage,
                     decorator: DotsDecorator(
                       color: Colors.grey,
                       activeColor: Colors.lightGreen,
@@ -134,11 +177,36 @@ class _NewTravelPageState extends State<NewTravelPage> {
               top: 40,
               left: 10,
               child: IconButton(
-                icon: Icon(Icons.arrow_back_ios),
-                color: Colors.white,
-                onPressed: () =>
-                    Navigator.canPop(context) ? Navigator.pop(context) : {},
-              ),
+                  icon: Icon(Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () async {
+                    if (currentPage == 0) {
+                      bool discard = await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Do you really want to discard this travel?'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('No'),
+                                onPressed: () => Navigator.pop(context, false),
+                              ),
+                              FlatButton(
+                                child: Text('Yes'),
+                                onPressed: () async {
+                                  Navigator.pop(context, true);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      if (discard) Navigator.pop(context);
+                    } else {
+                      previous();
+                    }
+                  }),
             ),
             Container(
               padding: EdgeInsets.only(top: 250),
@@ -206,7 +274,7 @@ class _NewTravelPageState extends State<NewTravelPage> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(50, 50, 50, 0),
+                          padding: EdgeInsets.fromLTRB(50, 50, 16, 0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -260,21 +328,29 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                     StopModel stop = stops[index];
                                     return Padding(
                                       padding:
-                                          EdgeInsets.fromLTRB(50, 0, 10, 10),
+                                          EdgeInsets.fromLTRB(20, 0, 0, 10),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
-                                          Text('${index + 1}. ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-                                          Flexible(
+                                          Text(
+                                            '${index + 1}. ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                          Expanded(
                                             child: Text(
-                                                  stop.location +
+                                              stop.location +
                                                   '\n' +
                                                   stop.height.toString() +
                                                   'm\n' +
-                                                  DateFormat('dd. MM. yyyy, HH:mm').format(DateTime.parse(stop.time)),
+                                                  DateFormat(
+                                                          'dd. MM. yyyy, HH:mm')
+                                                      .format(DateTime.parse(
+                                                          stop.time)),
                                               style: TextStyle(fontSize: 16),
                                             ),
                                           ),
@@ -286,6 +362,46 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                             onPressed: () {
                                               setState(() {
                                                 stops.removeAt(index);
+                                              });
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.edit,
+                                              color: Colors.green,
+                                            ),
+                                            onPressed: () async {
+                                              await showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return NewStopDialog(
+                                                    stops: stops,
+                                                    index: index,
+                                                  );
+                                                },
+                                              );
+                                              setState(() {
+                                                stops = stops;
+                                              });
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.content_copy,
+                                              color: Colors.blue,
+                                            ),
+                                            onPressed: () async {
+                                              await showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return NewStopDialog(
+                                                    stops: stops,
+                                                    duplicateIndex: index,
+                                                  );
+                                                },
+                                              );
+                                              setState(() {
+                                                stops = stops;
                                               });
                                             },
                                           ),
@@ -314,14 +430,23 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                 children: <Widget>[
                                   Expanded(
                                     child: IconButton(
-                                      icon: Icon(Icons.add_a_photo, color: Colors.lightGreen, size: 40,),
+                                      icon: Icon(
+                                        Icons.add_a_photo,
+                                        color: Colors.lightGreen,
+                                        size: 40,
+                                      ),
                                       onPressed: () async {
                                         await getImage(0);
                                       },
                                     ),
-                                  ),Expanded(
+                                  ),
+                                  Expanded(
                                     child: IconButton(
-                                      icon: Icon(Icons.add_photo_alternate, color: Colors.lightGreen, size: 40,),
+                                      icon: Icon(
+                                        Icons.add_photo_alternate,
+                                        color: Colors.lightGreen,
+                                        size: 40,
+                                      ),
                                       onPressed: () async {
                                         await getImage(1);
                                       },
@@ -329,24 +454,64 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 50,),
+                              SizedBox(
+                                height: 50,
+                              ),
                               Container(
                                 height: 200,
                                 child: Swiper(
                                   loop: false,
                                   itemCount: images.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Card(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: FileImage(images[index]),
-                                            fit: BoxFit.cover,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Stack(
+                                      children: <Widget>[
+                                        Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: FileImage(images[index]),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
                                           ),
-                                          borderRadius: BorderRadius.circular(10),
                                         ),
-                                      ),
+                                        Positioned(
+                                          top: 10,
+                                          right: 10,
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.remove_circle,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                images.removeAt(index);
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 10,
+                                          left: 10,
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.photo_size_select_actual,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                            onPressed: () {
+                                              setThumbnailImage(images[index]);
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     );
                                   },
                                   viewportFraction: 0.8,
@@ -388,82 +553,12 @@ class _NewTravelPageState extends State<NewTravelPage> {
               child: NewTravelNavigation(
                 prev: previous,
                 next: next,
+                currentPage: currentPage,
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class NewStopDialog extends StatefulWidget {
-  final List<StopModel> stops;
-
-  NewStopDialog({this.stops});
-
-  @override
-  _NewStopDialogState createState() => _NewStopDialogState();
-}
-
-class _NewStopDialogState extends State<NewStopDialog> {
-  final TextEditingController locationCtrl = new TextEditingController();
-  final TextEditingController heightCtrl = new TextEditingController();
-  DateTime dateTime = DateTime.now();
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Create new Location'),
-      content: Container(
-        height: 176,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TextFormField(
-              controller: locationCtrl,
-              decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(bottom: 11, top: 11),
-                  labelText: 'Location'),
-            ),
-            TextFormField(
-              controller: heightCtrl,
-              decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(bottom: 11, top: 11),
-                  labelText: 'See level height'),
-              keyboardType: TextInputType.numberWithOptions(),
-            ),
-            TimeInputField(
-              label: 'Date and Time',
-              time: dateTime,
-              updateTime: (DateTime value) {
-                setState(() {
-                  dateTime = value;
-                });
-              },
-            ),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        FlatButton(
-          child: Text('Cancel'),
-          onPressed: () => Navigator.pop(context),
-        ),
-        FlatButton(
-          child: Text('Add'),
-          onPressed: () {
-            StopModel newStop = new StopModel(
-                locationCtrl.text, int.parse(heightCtrl.text), dateTime.toIso8601String());
-            setState(() {
-              widget.stops.add(newStop);
-            });
-            Navigator.pop(context);
-          },
-        ),
-      ],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }
@@ -485,7 +580,8 @@ class NewTravelSlideLogo extends StatelessWidget {
 class NewTravelNavigation extends StatefulWidget {
   final VoidCallback next;
   final VoidCallback prev;
-  NewTravelNavigation({this.next, this.prev});
+  final double currentPage;
+  NewTravelNavigation({this.next, this.prev, this.currentPage});
 
   @override
   _NewTravelNavigationState createState() => _NewTravelNavigationState();
@@ -505,15 +601,18 @@ class _NewTravelNavigationState extends State<NewTravelNavigation> {
               child: IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: Colors.lightGreen,
+                  color:
+                      widget.currentPage == 0 ? Colors.grey : Colors.lightGreen,
                 ),
-                onPressed: widget.prev,
+                onPressed: widget.currentPage == 0 ? null : widget.prev,
               ),
             ),
             Expanded(
               child: IconButton(
                 icon: Icon(
-                  Icons.arrow_forward_ios,
+                  widget.currentPage == 4
+                      ? Icons.save
+                      : Icons.arrow_forward_ios,
                   color: Colors.lightGreen,
                 ),
                 onPressed: widget.next,

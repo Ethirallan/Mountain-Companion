@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mountaincompanion/pages/login/login_page.dart';
 import 'package:mountaincompanion/pages/mountain_tracker/mountain_tracker_page.dart';
 import 'package:mountaincompanion/pages/sos/sos_page.dart';
 import 'package:mountaincompanion/pages/travels/travels_page.dart';
@@ -83,6 +85,17 @@ class _MCDrawerState extends State<MCDrawer> {
                           builder: (context) => SOSPage(),
                         ),
                       );
+                    },
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('Logout'),
+                    onTap: () async {
+                      final FirebaseAuth _auth = FirebaseAuth.instance;
+                      if (await _auth.currentUser() != null) {
+                        await _auth.signOut();
+                        Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => LoginPage()));
+                      }
                     },
                   ),
                   Divider(),

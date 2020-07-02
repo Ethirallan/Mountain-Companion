@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +18,9 @@ class TravelDetailsPage extends StatelessWidget {
     if (value == 'Edit') {
       print('Edit clicked');
     } else if (value == 'Delete') {
-      await showDialog(context: context, builder: (context) {
-        if (Platform.isAndroid) {
+      await showDialog(
+        context: context,
+        builder: (context) {
           return AlertDialog(
             title: Text('Do you really want to delete this travel?'),
             actions: <Widget>[
@@ -33,28 +32,14 @@ class TravelDetailsPage extends StatelessWidget {
                 child: Text('Yes'),
                 onPressed: () async {
                   await deleteTravel(travel.id);
+                  Navigator.pop(context);
+                  Navigator.pop(context, 'deleted');
                 },
               ),
             ],
           );
-        } else {
-          return CupertinoAlertDialog(
-            title: Text('Do you really want to delete this travel?'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('No'),
-                onPressed: () => Navigator.pop(context),
-              ),
-              FlatButton(
-                child: Text('Yes'),
-                onPressed: () async {
-                  await deleteTravel(travel.id);
-                },
-              ),
-            ],
-          );
-        }
-      });
+        },
+      );
     }
   }
 
@@ -150,15 +135,21 @@ class TravelDetailsPage extends StatelessWidget {
                           child: FutureBuilder(
                             future: getStops(travel.id),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState != ConnectionState.done) {
-                                return Center(child: CircularProgressIndicator(),);
+                              if (snapshot.connectionState !=
+                                  ConnectionState.done) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
                               } else if (snapshot.hasData) {
                                 var data = snapshot.data['message'];
                                 if (data.length == 0) {
-
                                   return Container(
                                     child: Center(
-                                      child: Text('No stops recorded', style: TextStyle(color: Colors.white, fontSize: 20),),
+                                      child: Text(
+                                        'No stops recorded',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
                                     ),
                                   );
                                 }
@@ -192,7 +183,6 @@ class TravelDetailsPage extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   Container(
                     padding: EdgeInsets.all(16),
                     child: Column(
