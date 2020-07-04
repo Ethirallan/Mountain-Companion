@@ -73,6 +73,32 @@ class _TravelsPageState extends State<TravelsPage> {
                           if (snapshot.connectionState != ConnectionState.done) {
                             return Center(child: CircularProgressIndicator(),);
                           } else if (snapshot.hasData) {
+                            List data = snapshot.data['message'];
+                            if (data.length == 0) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    child: Image.asset('assets/mc-logo.png'),
+                                    height: 140,
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    'You do not have any travels yet.',
+                                    style: TextStyle(
+                                      color: Colors.lightBlue,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height:
+                                    100,
+                                  ),
+                                ],
+                              );
+                            }
                             return AnimationLimiter(
                               child: ListView.builder(
                                 itemCount: snapshot.data['message'].length,

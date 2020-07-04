@@ -11,6 +11,12 @@ import 'package:mountaincompanion/global_widgets/date_input_field.dart';
 import 'package:mountaincompanion/models/stop_model.dart';
 import 'package:mountaincompanion/pages/new_travel/widgets/loading_dialog.dart';
 import 'package:mountaincompanion/pages/new_travel/widgets/new_stop_dialog.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/new_travel_navigation.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/new_travel_notes_field.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/new_travel_slide_logo.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/new_travel_slide_title.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/new_travel_text_form_field.dart';
+import 'package:mountaincompanion/pages/new_travel/widgets/wave_cliper_one.dart';
 
 class NewTravelPage extends StatefulWidget {
   @override
@@ -22,11 +28,12 @@ class _NewTravelPageState extends State<NewTravelPage> {
   String imgHash;
   double currentPage = 0;
 
+  File thumbnailImg;
+
   void setThumbnailImage(File image) {
-    String base64Image = base64Encode(image.readAsBytesSync());
-    String photo = 'data:image/jpeg;base64,' + base64Image;
-    var bytes = utf8.encode(photo);
-    imgHash = sha256.convert(bytes).toString();
+    setState(() {
+      thumbnailImg = image;
+    });
   }
 
   void next() async {
@@ -67,8 +74,16 @@ class _NewTravelPageState extends State<NewTravelPage> {
             imagesBase64.add(photo);
           }
 
-          if (images.length > 0) {
-            setThumbnailImage(images[0]);
+          if (thumbnailImg != null) {
+            String base64Image = base64Encode(thumbnailImg.readAsBytesSync());
+            String photo = 'data:image/jpeg;base64,' + base64Image;
+            var bytes = utf8.encode(photo);
+            imgHash = sha256.convert(bytes).toString();
+          } else if (images.length > 0) {
+            String base64Image = base64Encode(images[0].readAsBytesSync());
+            String photo = 'data:image/jpeg;base64,' + base64Image;
+            var bytes = utf8.encode(photo);
+            imgHash = sha256.convert(bytes).toString();
           }
 
           var data = {
@@ -116,11 +131,20 @@ class _NewTravelPageState extends State<NewTravelPage> {
 
   Future getImage(int source) async {
     final pickedFile = await picker.getImage(
-        source: source == 0 ? ImageSource.camera : ImageSource.gallery);
+        source: source == 0 ? ImageSource.camera : ImageSource.gallery, imageQuality: 70);
 
-    setState(() {
-      images.add(File(pickedFile.path));
-    });
+    if(images.length == 0) {
+      setState(() {
+        images.add(File(pickedFile.path));
+        thumbnailImg = images[0];
+      });
+    } else {
+      setState(() {
+        setState(() {
+          images.add(File(pickedFile.path));
+        });
+      });
+    }
   }
 
   List<File> images = [];
@@ -472,12 +496,20 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                                   BorderRadius.circular(10)),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: FileImage(images[index]),
-                                                fit: BoxFit.cover,
-                                              ),
+                                              color: Colors.lightBlue,
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
+                                            ),
+                                            child: Container(
+                                              margin: EdgeInsets.all(images[index] == thumbnailImg ? 10 :0),
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: FileImage(images[index]),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -560,162 +592,5 @@ class _NewTravelPageState extends State<NewTravelPage> {
         ),
       ),
     );
-  }
-}
-
-class NewTravelSlideLogo extends StatelessWidget {
-  final IconData iconData;
-  NewTravelSlideLogo({this.iconData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Icon(
-      iconData,
-      color: Colors.lightGreen,
-      size: 160,
-    );
-  }
-}
-
-class NewTravelNavigation extends StatefulWidget {
-  final VoidCallback next;
-  final VoidCallback prev;
-  final double currentPage;
-  NewTravelNavigation({this.next, this.prev, this.currentPage});
-
-  @override
-  _NewTravelNavigationState createState() => _NewTravelNavigationState();
-}
-
-class _NewTravelNavigationState extends State<NewTravelNavigation> {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Container(
-        width: 100,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Expanded(
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color:
-                      widget.currentPage == 0 ? Colors.grey : Colors.lightGreen,
-                ),
-                onPressed: widget.currentPage == 0 ? null : widget.prev,
-              ),
-            ),
-            Expanded(
-              child: IconButton(
-                icon: Icon(
-                  widget.currentPage == 4
-                      ? Icons.save
-                      : Icons.arrow_forward_ios,
-                  color: Colors.lightGreen,
-                ),
-                onPressed: widget.next,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NewTravelTextFormField extends StatelessWidget {
-  final TextEditingController ctrl;
-  NewTravelTextFormField({this.ctrl});
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: TextFormField(
-        controller: ctrl,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          disabledBorder: InputBorder.none,
-          contentPadding:
-              EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-        ),
-      ),
-    );
-  }
-}
-
-class NewTravelNotesField extends StatelessWidget {
-  final TextEditingController ctrl;
-  NewTravelNotesField({this.ctrl});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 400,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: TextFormField(
-          controller: ctrl,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            contentPadding:
-                EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-          ),
-          expands: true,
-          minLines: null,
-          maxLines: null,
-        ),
-      ),
-    );
-  }
-}
-
-class NewTravelSlideTitle extends StatelessWidget {
-  final String title;
-  NewTravelSlideTitle({this.title});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 30,
-          color: Colors.lightGreen,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
-class WaveClipperOne extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Offset firstEndPoint = Offset(size.width * 0.45, size.height - 60);
-    Offset firstControlPoint = Offset(size.width * 0.15, size.height - 60);
-    Offset secondEndPoint = Offset(size.width, size.height - 150);
-    Offset secondControlPoint = Offset(size.width * 0.85, size.height - 50);
-
-    final path = Path()
-      ..lineTo(0.0, size.height)
-      ..quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-          firstEndPoint.dx, firstEndPoint.dy)
-      ..quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-          secondEndPoint.dx, secondEndPoint.dy)
-      ..lineTo(size.width, 0)
-      ..close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
   }
 }

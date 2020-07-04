@@ -27,7 +27,7 @@ class TravelCard extends StatelessWidget {
                   ),
                 ),
               );
-              if (res == 'deleted') {
+              if (res) {
                 fun.call();
               }
             },

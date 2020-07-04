@@ -19,6 +19,7 @@ class _NewStopDialogState extends State<NewStopDialog> {
   DateTime dateTime = DateTime.now();
 
 
+  String title = 'Create new Location';
   @override
   Widget build(BuildContext context) {
     if (widget.index != null) {
@@ -26,6 +27,7 @@ class _NewStopDialogState extends State<NewStopDialog> {
       locationCtrl.text = stop.location;
       heightCtrl.text = stop.height.toString();
 //      dateTime = DateTime.parse(stop.time);
+      title = 'Update location';
     } else if(widget.duplicateIndex != null) {
       StopModel stop = widget.stops[widget.duplicateIndex];
       locationCtrl.text = stop.location;
@@ -34,7 +36,7 @@ class _NewStopDialogState extends State<NewStopDialog> {
     }
 
     return AlertDialog(
-      title: Text('Create new Location'),
+      title: Text(title),
       content: Container(
         height: 176,
         child: Column(
@@ -72,7 +74,7 @@ class _NewStopDialogState extends State<NewStopDialog> {
           onPressed: () => Navigator.pop(context),
         ),
         FlatButton(
-          child: Text('Add'),
+          child: Text('Save'),
           onPressed: () {
             StopModel newStop = new StopModel(
                 locationCtrl.text, int.parse(heightCtrl.text), dateTime.toIso8601String());

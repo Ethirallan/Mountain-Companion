@@ -11,6 +11,8 @@ class TimeInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime dateTime = time;
+
     return GestureDetector(
       onTap: () async {
         FocusScope.of(context).unfocus();
@@ -54,7 +56,10 @@ class TimeInputField extends StatelessWidget {
                                 color: Theme.of(context).primaryColor,
                               ),
                             ),
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              updateTime(dateTime);
+                              Navigator.pop(context);
+                            },
                           ),
                         ),
                       ],
@@ -66,8 +71,12 @@ class TimeInputField extends StatelessWidget {
                     Container(
                       height: 200,
                       child: CupertinoDatePicker(
-                        onDateTimeChanged: (DateTime value) =>
-                            updateTime(value),
+                        initialDateTime: time,
+                        onDateTimeChanged: (DateTime value) {
+                          updateTime(value);
+                          dateTime = value;
+                          print(dateTime);
+                        },
                         mode: CupertinoDatePickerMode.dateAndTime,
                       ),
                     ),
@@ -83,7 +92,7 @@ class TimeInputField extends StatelessWidget {
             contentPadding: EdgeInsets.only(bottom: 10, top: 11),
             labelText: label),
         child: Text(
-          DateFormat('dd. MM. yyyy, HH:mm').format(time),
+          DateFormat('dd. MM. yyyy, HH:mm').format(dateTime),
         ),
       ),
     );
