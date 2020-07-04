@@ -371,7 +371,7 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                                 stop.location +
                                                     '\n' +
                                                     stop.height.toString() +
-                                                    'm\n' +
+                                                    ' m\n' +
                                                     DateFormat(
                                                             'dd. MM. yyyy, HH:mm')
                                                         .format(DateTime.parse(

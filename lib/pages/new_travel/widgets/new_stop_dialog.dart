@@ -20,21 +20,25 @@ class _NewStopDialogState extends State<NewStopDialog> {
 
 
   String title = 'Create new Location';
+
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     if (widget.index != null) {
       StopModel stop = widget.stops[widget.index];
       locationCtrl.text = stop.location;
       heightCtrl.text = stop.height.toString();
-//      dateTime = DateTime.parse(stop.time);
+      dateTime = DateTime.parse(stop.time);
       title = 'Update location';
     } else if(widget.duplicateIndex != null) {
       StopModel stop = widget.stops[widget.duplicateIndex];
       locationCtrl.text = stop.location;
       heightCtrl.text = stop.height.toString();
-//      dateTime = DateTime.parse(stop.time); // TODO: problem??
+      dateTime = DateTime.parse(stop.time);
     }
-
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title),
       content: Container(
