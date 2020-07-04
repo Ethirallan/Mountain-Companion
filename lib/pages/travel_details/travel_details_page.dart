@@ -315,15 +315,19 @@ class _TravelDetailsPageState extends State<TravelDetailsPage> {
                                                       );
                                                     },
                                                   );
-                                                  DateTime newDate =
-                                                      await selectedDate;
+                                                  DateTime newDate = await selectedDate;
+                                                  print(newDate);
                                                   if (newDate != null) {
                                                     await updateTravel({
                                                       'date': newDate
                                                           .toIso8601String()
                                                     }, widget.travel.id);
                                                   }
-                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    widget
+                                                        .travel
+                                                        .date = newDate;
+                                                  });
                                                 } else {
                                                   showModalBottomSheet(
                                                     context: context,

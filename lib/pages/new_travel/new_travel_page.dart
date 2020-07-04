@@ -244,7 +244,7 @@ class _NewTravelPageState extends State<NewTravelPage> {
                       controller: pageCtrl,
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.fromLTRB(50, 50, 50, 0),
+                          padding: EdgeInsets.fromLTRB(50, 30, 50, 0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -268,7 +268,7 @@ class _NewTravelPageState extends State<NewTravelPage> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(50, 50, 50, 0),
+                          padding: EdgeInsets.fromLTRB(50, 30, 50, 0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -298,7 +298,7 @@ class _NewTravelPageState extends State<NewTravelPage> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(50, 50, 16, 0),
+                          padding: EdgeInsets.fromLTRB(50, 30, 16, 0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -307,7 +307,7 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                 title: 'Travel path',
                               ),
                               SizedBox(
-                                height: 20,
+                                height: 10,
                               ),
                               Padding(
                                 padding: EdgeInsets.only(left: 30),
@@ -339,107 +339,109 @@ class _NewTravelPageState extends State<NewTravelPage> {
                                   },
                                 ),
                               ),
-                              Container(
-                                height: 400,
-                                child: ListView.builder(
-                                  controller: PageController(
-                                    viewportFraction: 0.8,
-                                    initialPage: 0,
+                              Expanded(
+                                child: Container(
+                                  //height: 400,
+                                  child: ListView.builder(
+                                    controller: PageController(
+                                      viewportFraction: 0.8,
+                                      initialPage: 0,
+                                    ),
+                                    itemCount: stops.length,
+                                    itemBuilder: (context, index) {
+                                      //return StopCard(stop: stops[index]);
+                                      StopModel stop = stops[index];
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(20, 0, 0, 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              '${index + 1}. ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                stop.location +
+                                                    '\n' +
+                                                    stop.height.toString() +
+                                                    'm\n' +
+                                                    DateFormat(
+                                                            'dd. MM. yyyy, HH:mm')
+                                                        .format(DateTime.parse(
+                                                            stop.time)),
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.clear,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  stops.removeAt(index);
+                                                });
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: Colors.green,
+                                              ),
+                                              onPressed: () async {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return NewStopDialog(
+                                                      stops: stops,
+                                                      index: index,
+                                                    );
+                                                  },
+                                                );
+                                                setState(() {
+                                                  stops = stops;
+                                                });
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.content_copy,
+                                                color: Colors.blue,
+                                              ),
+                                              onPressed: () async {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return NewStopDialog(
+                                                      stops: stops,
+                                                      duplicateIndex: index,
+                                                    );
+                                                  },
+                                                );
+                                                setState(() {
+                                                  stops = stops;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  itemCount: stops.length,
-                                  itemBuilder: (context, index) {
-                                    //return StopCard(stop: stops[index]);
-                                    StopModel stop = stops[index];
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(20, 0, 0, 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            '${index + 1}. ',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              stop.location +
-                                                  '\n' +
-                                                  stop.height.toString() +
-                                                  'm\n' +
-                                                  DateFormat(
-                                                          'dd. MM. yyyy, HH:mm')
-                                                      .format(DateTime.parse(
-                                                          stop.time)),
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                          ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.clear,
-                                              color: Colors.red,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                stops.removeAt(index);
-                                              });
-                                            },
-                                          ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.edit,
-                                              color: Colors.green,
-                                            ),
-                                            onPressed: () async {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return NewStopDialog(
-                                                    stops: stops,
-                                                    index: index,
-                                                  );
-                                                },
-                                              );
-                                              setState(() {
-                                                stops = stops;
-                                              });
-                                            },
-                                          ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.content_copy,
-                                              color: Colors.blue,
-                                            ),
-                                            onPressed: () async {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return NewStopDialog(
-                                                    stops: stops,
-                                                    duplicateIndex: index,
-                                                  );
-                                                },
-                                              );
-                                              setState(() {
-                                                stops = stops;
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
                                 ),
                               ),
                             ],
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(50, 50, 50, 0),
+                          padding: EdgeInsets.fromLTRB(50, 30, 50, 0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -580,8 +582,8 @@ class _NewTravelPageState extends State<NewTravelPage> {
               ),
             ),
             Positioned(
-              bottom: 50,
-              right: 50,
+              bottom: Platform.isIOS ? 50 : 10,
+              right: Platform.isIOS ? 50 : 10,
               child: NewTravelNavigation(
                 prev: previous,
                 next: next,

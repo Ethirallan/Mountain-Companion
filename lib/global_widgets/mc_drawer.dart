@@ -40,12 +40,6 @@ class _MCDrawerState extends State<MCDrawer> {
                     title: Text('Travels'),
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                          builder: (context) => TravelsPage(),
-                        ),
-                      );
                     },
                   ),
                   Divider(),
@@ -102,14 +96,13 @@ class _MCDrawerState extends State<MCDrawer> {
                 ],
               ),
             ),
-            Expanded(
-                child: Align(
+            Align(
               child: Container(
-                child: Image.asset('assets/mc-logo.png'),
-                height: 140,
+            child: Image.asset('assets/mc-logo.png'),
+            height: 140,
               ),
               alignment: Alignment.bottomCenter,
-            )),
+            ),
           ],
         ),
       ),
