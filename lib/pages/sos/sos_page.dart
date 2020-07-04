@@ -69,14 +69,16 @@ class _SOSPageState extends State<SOSPage> {
         await Future.delayed(Duration(milliseconds: time), () async {
           await TorchCompat.turnOff();
         });
-        await Future.delayed(Duration(milliseconds: 800), () {
+        await Future.delayed(Duration(milliseconds: 300), () {
           setState(() {
             sosProgress += ' ';
           });
         });
       }
-      setState(() {
-        sosProgress += '  ';
+      await Future.delayed(Duration(milliseconds: 600), () {
+        setState(() {
+          sosProgress += ' ';
+        });
       });
     }
     return Scaffold(
@@ -173,7 +175,7 @@ class _SOSPageState extends State<SOSPage> {
                                 disableFlashlightButton = true;
                               });
                               await flashlightSOS(300, '•');
-                              await flashlightSOS(1500, '––');
+                              await flashlightSOS(900, '–');
                               await flashlightSOS(300, '•');
                               setState(() {
                                 sosProgress = ' ';

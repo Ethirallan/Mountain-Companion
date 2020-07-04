@@ -9,7 +9,8 @@ import 'travel_card_button.dart';
 class TravelCard extends StatelessWidget {
   final String tag;
   final TravelModel travel;
-  TravelCard({this.tag, this.travel});
+  final VoidCallback fun;
+  TravelCard({this.tag, this.travel, this.fun});
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -17,11 +18,19 @@ class TravelCard extends StatelessWidget {
         Padding(
           padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
           child: InkWell(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => TravelDetailsPage(
-                      tag: tag,
-                      travel: travel,
-                    ))),
+            onTap: () async {
+              var res = await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => TravelDetailsPage(
+                    tag: tag,
+                    travel: travel,
+                  ),
+                ),
+              );
+              if (res) {
+                fun.call();
+              }
+            },
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -84,30 +93,45 @@ class TravelCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.lightGreen,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 6),
-                              child: Text(travel.title ?? ''),
-                            ),
-                          ],
+                        Expanded(
+                          flex: 3,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.lightGreen,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 6),
+                                  child: Text(
+                                    travel.title ?? '',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.date_range,
-                              color: Colors.lightGreen,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 6),
-                              child: Text(DateFormat('dd. MM. yyyy')
-                                  .format(travel.date)),
-                            ),
-                          ],
+                        Expanded(
+                          flex: 2,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.date_range,
+                                color: Colors.lightGreen,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 6),
+                                child: Text(DateFormat('dd. MM. yyyy')
+                                    .format(travel.date)),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

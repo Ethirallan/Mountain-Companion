@@ -47,11 +47,9 @@ class LoginPage extends StatelessWidget {
     });
   }
 
-  Future<String> _recoverPassword(String name) {
-    return Future.delayed(loginTime).then((_) {
-      if (name != 'admin@admin.si') {
-        return "User doesn't exist";
-      }
+  Future<String> _recoverPassword(String email) {
+    return Future.delayed(loginTime).then((_) async {
+      await _auth.sendPasswordResetEmail(email: email);
       return null;
     });
   }
