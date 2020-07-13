@@ -49,7 +49,7 @@ class StopCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(top: 4, bottom: 8),
                 child: Text(
-                  DateFormat('dd. MM. yyyy').format(DateTime.parse(stop.time)),
+                  DateFormat('dd. MM. yyyy hh:mm').format(DateTime.parse(stop.time)),
                   style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ),
